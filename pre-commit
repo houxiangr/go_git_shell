@@ -1,0 +1,32 @@
+#!/bin/sh
+
+## gofmt
+## grep更新中.go文件
+go_files=$(git diff --cached --name-only --diff-filter=ACM | grep '.go$')
+[ -z "$go_files" ] && exit 0
+
+## 找到需要gofmt格式化的文件
+unformatted_files=$(gofmt -l $go_files)
+if [ ! -z "$unformatted_files" ]
+then
+    printf "gofmt formatting code...\n"
+    for fn in $unformatted_files; do
+      echo >&2 "  gofmt -w $PWD/$fn"
+      gofmt -w $PWD/$fn
+    done
+fi
+printf "gofmt done\n"
+
+#编译测试
+printf "Building\n"
+go install
+ret=$?
+if [ $ret -ne 0 ]
+then
+    printf "Build Failed\n"
+    exit 10
+else
+    printf "Build Success\n"
+fi
+
+exit 0

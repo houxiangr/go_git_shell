@@ -1,0 +1,15 @@
+#!/bin/sh
+
+## 运行单元测试
+printf "Tests Running\n"
+go test -cover ./...
+ret=$?
+if [ $ret -ne 0 ]
+then
+  echo "Tests Failed"
+  exit 11
+else
+  echo "Test Pass"
+fi
+
+exit 0
